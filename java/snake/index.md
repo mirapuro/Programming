@@ -235,7 +235,7 @@ class GamePanel extends JPanel implements ActionListener {
 }
 ```
 ---
-##🎓 発展課題（チャレンジ！）
+## 🎓 発展課題（チャレンジ！）
 - ゲームスコアの表示
 - 難易度（速度）調整
 - エサの種類（スコアに応じて色や効果を変える）
