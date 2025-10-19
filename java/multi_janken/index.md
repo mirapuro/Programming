@@ -1,4 +1,4 @@
-# ⚔️ Spring Bootで作る「マルチプレイヤーじゃんけん（WebSocket）」
+# ⚔️ Spring Bootで作る「マルチプレイヤーじゃんけん（WebSocket・部屋制対応）」
 
 この教材では、Spring Bootを使って**リアルタイム通信によるマルチプレイヤーじゃんけん**を作ります。  
 WebSocketを利用して、**複数の部屋（ルーム）**で独立して対戦できるようにします。
@@ -13,26 +13,41 @@ WebSocketを利用して、**複数の部屋（ルーム）**で独立して対�
 
 ---
 
-## 🧱 プロジェクト構成
+## 🏗️ 0. プロジェクトの作成手順
+
+### 🧩 前提
+- Java 17以上
+- Gradle（または `./gradlew`）
+- 任意のIDE（IntelliJ IDEA / VSCode / Eclipseなど）
+
+---
+
+### 1️⃣ 新規プロジェクトの作成
+
+コマンドラインで次のように実行します：
+
+```bash
+mkdir multiplayer-janken
+cd multiplayer-janken
+gradle init --type java-application
+```
+
+これで以下のような構成ができます：
 
 ```
 multiplayer-janken/
-├─ src/main/java/com/example/janken/
-│   ├─ JankenApplication.java
-│   ├─ config/WebSocketConfig.java
-│   ├─ controller/JankenController.java
-│   ├─ model/Message.java
-│   ├─ model/Room.java
-│   └─ service/RoomService.java
-└─ src/main/resources/static/
-    └─ index.html
+├─ build.gradle
+├─ settings.gradle
+└─ src/
+   ├─ main/java/
+   └─ test/java/
 ```
 
 ---
 
-## ⚙️ 1. 環境設定
+### 2️⃣ Spring Bootプラグインを導入
 
-`build.gradle` に以下を追加します。
+`build.gradle` を以下のように編集します：
 
 ```gradle
 plugins {
@@ -56,9 +71,44 @@ dependencies {
 }
 ```
 
+その後、依存関係を更新します：
+
+```bash
+./gradlew build
+```
+
 ---
 
-## 🚀 2. アプリケーション起動クラス
+### 3️⃣ パッケージ構成を作成
+
+以下のディレクトリを作ります：
+
+```bash
+mkdir -p src/main/java/com/example/janken/config
+mkdir -p src/main/java/com/example/janken/controller
+mkdir -p src/main/java/com/example/janken/model
+mkdir -p src/main/java/com/example/janken/service
+mkdir -p src/main/resources/static
+```
+
+完成イメージ：
+
+```
+multiplayer-janken/
+├─ src/main/java/com/example/janken/
+│   ├─ JankenApplication.java
+│   ├─ config/WebSocketConfig.java
+│   ├─ controller/JankenController.java
+│   ├─ model/Message.java
+│   ├─ model/Room.java
+│   └─ service/RoomService.java
+└─ src/main/resources/static/
+    └─ index.html
+```
+
+---
+
+## 🚀 1. アプリケーション起動クラス
 
 ```java
 package com.example.janken;
@@ -76,7 +126,7 @@ public class JankenApplication {
 
 ---
 
-## 🛰️ 3. WebSocket設定
+## 🛰️ 2. WebSocket設定
 
 ```java
 package com.example.janken.config;
@@ -107,9 +157,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
 ---
 
-## 🎮 4. モデル定義
+## 🎮 3. モデル定義
 
 ### Message.java
+
 ```java
 package com.example.janken.model;
 
@@ -140,7 +191,10 @@ public class Message {
 }
 ```
 
+---
+
 ### Room.java
+
 ```java
 package com.example.janken.model;
 
@@ -189,7 +243,7 @@ public class Room {
 
 ---
 
-## 🧠 5. RoomService.java
+## 🧠 4. RoomService.java
 
 ```java
 package com.example.janken.service;
@@ -215,7 +269,7 @@ public class RoomService {
 
 ---
 
-## 🕹️ 6. WebSocketコントローラ
+## 🕹️ 5. WebSocketコントローラ
 
 ```java
 package com.example.janken.controller;
@@ -288,7 +342,7 @@ public class JankenController extends TextWebSocketHandler {
 
 ---
 
-## 🧩 7. クライアント側HTML
+## 🧩 6. クライアント側HTML
 
 `src/main/resources/static/index.html`
 
@@ -327,7 +381,7 @@ public class JankenController extends TextWebSocketHandler {
       };
 
       ws.onmessage = (e) => {
-        document.getElementById("log").textContent += e.data + "\n";
+        document.getElementById("log").textContent += e.data + "\\n";
       };
     }
 
@@ -341,17 +395,17 @@ public class JankenController extends TextWebSocketHandler {
 
 ---
 
-## 🧪 8. 実行とテスト
+## 🧪 7. 実行とテスト
 
 1. Spring Bootを起動します：
    ```bash
    ./gradlew bootRun
    ```
-2. ブラウザで以下にアクセス：
+2. ブラウザでアクセス：
    ```
    http://localhost:8080
    ```
-3. 2つのブラウザを開いて同じ部屋番号を入力し、じゃんけんしてみましょう。
+3. 2つのブラウザを開いて同じ部屋番号を入力し、じゃんけんしてみましょう！
 
 ---
 
